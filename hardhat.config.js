@@ -7,40 +7,32 @@ export default {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200, // Higher runs = more optimization for runtime, lower for deployment
+        runs: 200,
       },
     },
   },
   networks: {
-    // Etherlink Mainnet
-    etherlinkMainnet: {
+    // Moonbase Alpha — Polkadot EVM-compatible testnet (Primary)
+    moonbaseAlpha: {
       type: 'http',
-      url: "https://node.mainnet.etherlink.com",
-      chainId: 42793,
+      url: "https://rpc.api.moonbase.moonbeam.network",
+      chainId: 1287,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
 
-    // Etherlink Shadownet Testnet (Primary)
-    etherlinkTestnet: {
+    // Moonbeam Mainnet — Polkadot EVM-compatible mainnet
+    moonbeam: {
       type: 'http',
-      url: "https://node.shadownet.etherlink.com",
-      chainId: 127823,
+      url: "https://rpc.api.moonbeam.network",
+      chainId: 1284,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
 
-    // Etherlink Ghostnet Testnet (Alternative)
-    etherlinkGhostnet: {
+    // Moonriver — Kusama EVM-compatible (canary network)
+    moonriver: {
       type: 'http',
-      url: "https://node.ghostnet.etherlink.com",
-      chainId: 128123,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-    },
-
-    // Somnia test net (keeping for reference)
-    somniaTestnet: {
-      type: 'http',
-      url: "https://dream-rpc.somnia.network/",
-      chainId: 50312,
+      url: "https://rpc.api.moonriver.moonbeam.network",
+      chainId: 1285,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
   },

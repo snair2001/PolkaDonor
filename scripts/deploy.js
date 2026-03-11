@@ -22,7 +22,7 @@ async function main() {
   const bytecode = artifact.bytecode;
 
   // 2. Setup Provider and Wallet
-  const rpcUrl = "https://node.shadownet.etherlink.com";
+  const rpcUrl = "https://rpc.api.moonbase.moonbeam.network";
   const privateKey = process.env.PRIVATE_KEY;
 
   if (!privateKey) {
@@ -30,7 +30,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Connect to the Etherlink Shadownet Testnet
+  // Connect to Moonbase Alpha (Polkadot EVM testnet)
   const provider = new ethers.JsonRpcProvider(rpcUrl);
   const wallet = new ethers.Wallet(privateKey, provider);
 

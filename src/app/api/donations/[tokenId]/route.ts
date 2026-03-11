@@ -3,21 +3,22 @@ import { createPublicClient, http } from "viem";
 import { contractAbi } from "@/constants";
 import { contractAddress } from "@/constants";
 
-const etherlinkTestnet = {
-  id: 127823,
-  name: 'Etherlink Shadownet',
+const moonbaseAlpha = {
+  id: 1287,
+  name: 'Moonbase Alpha',
   nativeCurrency: {
     decimals: 18,
-    name: 'XTZ',
-    symbol: 'XTZ',
+    name: 'DEV',
+    symbol: 'DEV',
   },
   rpcUrls: {
-    default: { http: ['https://node.shadownet.etherlink.com'] },
-    public: { http: ['https://node.shadownet.etherlink.com'] },
+    default: { http: ['https://rpc.api.moonbase.moonbeam.network'] },
+    public: { http: ['https://rpc.api.moonbase.moonbeam.network'] },
   },
   blockExplorers: {
-    default: { name: 'Etherlink Explorer', url: 'https://testnet.explorer.etherlink.com/' },
+    default: { name: 'Moonscan', url: 'https://moonbase.moonscan.io' },
   },
+  testnet: true,
 } as const;
 
 export const dynamic = "force-dynamic";
@@ -44,8 +45,8 @@ export async function GET(
     console.log("Fetching donations for tokenId:", tokenId);
 
     const client = createPublicClient({
-      chain: etherlinkTestnet,
-      transport: http(process.env.NEXT_PUBLIC_RPC_URL || "https://node.shadownet.etherlink.com"),
+      chain: moonbaseAlpha,
+      transport: http(process.env.NEXT_PUBLIC_RPC_URL || "https://rpc.api.moonbase.moonbeam.network"),
     });
 
     console.log("Created RPC client, fetching events...");

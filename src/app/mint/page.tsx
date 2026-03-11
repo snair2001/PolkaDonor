@@ -74,10 +74,10 @@ export default function MintPage() {
     }
 
     // Check if on correct network
-    if (chainId !== 127823) {
+    if (chainId !== 1287) {
       toast({
         title: "Wrong Network",
-        description: "Please switch to Etherlink Shadownet (Chain ID: 127823) in your wallet.",
+        description: "Please switch to Moonbase Alpha (Chain ID: 1287) in your wallet.",
         variant: "destructive",
       });
       return;
@@ -238,9 +238,9 @@ export default function MintPage() {
               </div>
             )}
 
-            {isConnected && chainId !== 127823 && (
+            {isConnected && chainId !== 1287 && (
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-sm text-yellow-800 dark:text-yellow-200">
-                ⚠️ Wrong network! Please switch to Etherlink Shadownet (Chain ID: 127823) in your wallet.
+                ⚠️ Wrong network! Please switch to Moonbase Alpha (Chain ID: 1287) in your wallet.
               </div>
             )}
 

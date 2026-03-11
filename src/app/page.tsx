@@ -239,7 +239,7 @@ export default function Home() {
           <div className="rounded-xl border bg-card dark:bg-gradient-to-br dark:from-slate-900/60 dark:to-emerald-900/40 px-4 py-3">
             <p className="text-xs text-muted-foreground">Total fan donations</p>
             <p className="text-lg font-semibold">
-              {nfts.length > 0 ? `${formatEther(totalDonationsAll)} ETH` : "0 ETH"}
+              {nfts.length > 0 ? `${formatEther(totalDonationsAll)} DEV` : "0 DEV"}
             </p>
           </div>
           <div className="rounded-xl border bg-card dark:bg-gradient-to-br dark:from-slate-900/60 dark:to-indigo-900/40 px-4 py-3">
@@ -277,7 +277,7 @@ export default function Home() {
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{nft.metadata.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {formatEther(nft.totalDonations)} ETH fan donations
+                        {formatEther(nft.totalDonations)} DEV fan donations
                       </p>
                     </div>
                   </div>
@@ -329,7 +329,7 @@ export default function Home() {
                       </div>
                     </div>
                     <span className="text-sm font-semibold">
-                      {formatEther(entry.total)} XTZ
+                      {formatEther(entry.total)} DEV
                     </span>
                   </li>
                 ))}

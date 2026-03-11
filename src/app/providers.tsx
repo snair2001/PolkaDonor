@@ -7,29 +7,28 @@ import { WagmiProvider, http } from "wagmi";
 import { type Chain } from "viem";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const etherlinkTestnet = {
-  id: 127823,
-  name: 'Etherlink Shadownet',
+const moonbaseAlpha = {
+  id: 1287,
+  name: 'Moonbase Alpha',
   nativeCurrency: {
     decimals: 18,
-    name: 'XTZ',
-    symbol: 'XTZ',
+    name: 'DEV',
+    symbol: 'DEV',
   },
-  
-  
   rpcUrls: {
-    default: { http: ['https://node.shadownet.etherlink.com'] },
-    public: { http: ['https://node.shadownet.etherlink.com'] },
+    default: { http: ['https://rpc.api.moonbase.moonbeam.network'] },
+    public: { http: ['https://rpc.api.moonbase.moonbeam.network'] },
   },
   blockExplorers: {
-    default: { name: 'Etherlink Explorer', url: 'https://testnet.explorer.etherlink.com/' },
+    default: { name: 'Moonscan', url: 'https://moonbase.moonscan.io' },
   },
+  testnet: true,
 } as const satisfies Chain;
 
 const config = getDefaultConfig({
   appName: "Fan Donation Platform",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
-  chains: [etherlinkTestnet],
+  chains: [moonbaseAlpha],
   wallets: [
     {
       groupName: "Preferred",
@@ -37,7 +36,7 @@ const config = getDefaultConfig({
     },
   ],
   transports: {
-    [etherlinkTestnet.id]: http(process.env.NEXT_PUBLIC_RPC_URL || "https://node.shadownet.etherlink.com"),
+    [moonbaseAlpha.id]: http(process.env.NEXT_PUBLIC_RPC_URL || "https://rpc.api.moonbase.moonbeam.network"),
   },
   ssr: true,
 });
