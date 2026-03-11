@@ -28,15 +28,17 @@ interface NftMetadata {
     image: string;
 }
 
-// Convert any IPFS gateway URL to a reliable gateway
-function toReliableGateway(url: string | undefined): string {
-  if (!url) return '';
-  // Extract the CID from any known IPFS gateway URL or ipfs:// protocol
+// IPFS gateway fallback list (in priority order)
+const IPFS_GATEWAYS = [
+  'https://gateway.pinata.cloud/ipfs/',
+  'https://ipfs.io/ipfs/',
+  'https://dweb.link/ipfs/',
+];
+
+// Extract IPFS CID from any gateway URL
+function extractCid(url: string): string | null {
   const match = url.match(/(?:ipfs[:/]+|\/ipfs\/)(.+)/);
-  if (match) {
-    return `https://cloudflare-ipfs.com/ipfs/${match[1]}`;
-  }
-  return url;
+  return match ? match[1] : null;
 }
 
 export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: NFTCardProps) {
@@ -46,13 +48,15 @@ export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: N
   const [events, setEvents] = useState<any[]>([]);
   const [imgSrc, setImgSrc] = useState<string>('');
   const [imgError, setImgError] = useState(false);
+  const [gatewayIndex, setGatewayIndex] = useState(0);
   const { toast } = useToast();
 
-  // Resolve image URL through reliable gateway
+  // Set image URL from metadata (use original URL as-is)
   useEffect(() => {
     if (metadata?.image) {
-      setImgSrc(toReliableGateway(metadata.image));
+      setImgSrc(metadata.image);
       setImgError(false);
+      setGatewayIndex(0);
     }
   }, [metadata?.image]);
 
@@ -147,15 +151,15 @@ export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: N
                 className="object-cover"
                 unoptimized
                 onError={() => {
-                  // If cloudflare gateway fails, try ipfs.io
-                  if (imgSrc.includes('cloudflare-ipfs.com') && metadata?.image) {
-                    const match = metadata.image.match(/(?:ipfs[:/]+|\/ipfs\/)(.+)/);
-                    if (match) {
-                      setImgSrc(`https://ipfs.io/ipfs/${match[1]}`);
-                      return;
-                    }
+                  // Try next IPFS gateway
+                  const cid = metadata?.image ? extractCid(metadata.image) : null;
+                  const nextIndex = gatewayIndex + 1;
+                  if (cid && nextIndex < IPFS_GATEWAYS.length) {
+                    setGatewayIndex(nextIndex);
+                    setImgSrc(`${IPFS_GATEWAYS[nextIndex]}${cid}`);
+                  } else {
+                    setImgError(true);
                   }
-                  setImgError(true);
                 }}
               />
             ) : (

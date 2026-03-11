@@ -11,14 +11,38 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatEther } from "viem";
 
-// Convert any IPFS gateway URL to a reliable gateway
-function toReliableGateway(url: string | undefined): string {
-  if (!url) return '';
+// IPFS gateway fallback list (in priority order)
+const IPFS_GATEWAYS = [
+  'https://gateway.pinata.cloud/ipfs/',
+  'https://ipfs.io/ipfs/',
+  'https://dweb.link/ipfs/',
+];
+
+// Extract IPFS CID from any gateway URL or ipfs:// protocol
+function extractCid(url: string): string | null {
   const match = url.match(/(?:ipfs[:/]+|\/ipfs\/)(.+)/);
-  if (match) {
-    return `https://cloudflare-ipfs.com/ipfs/${match[1]}`;
+  return match ? match[1] : null;
+}
+
+// Build a gateway URL for a given CID using the preferred gateway
+function ipfsUrl(cid: string, gatewayIndex = 0): string {
+  return `${IPFS_GATEWAYS[gatewayIndex % IPFS_GATEWAYS.length]}${cid}`;
+}
+
+// Fetch with IPFS gateway fallback — tries each gateway in order
+async function fetchWithGatewayFallback(url: string): Promise<Response> {
+  const cid = extractCid(url);
+  if (!cid) return fetch(url);
+
+  for (let i = 0; i < IPFS_GATEWAYS.length; i++) {
+    try {
+      const gwUrl = ipfsUrl(cid, i);
+      const res = await fetch(gwUrl);
+      if (res.ok) return res;
+    } catch { /* try next gateway */ }
   }
-  return url;
+  // Last resort: original URL
+  return fetch(url);
 }
 
 export interface NftData {
@@ -89,18 +113,8 @@ export default function Home() {
 
           let metadata: any = {};
           try {
-            // Try fetching metadata via reliable gateway first
-            const reliableURI = toReliableGateway(tokenURI);
-            let response = await fetch(reliableURI);
-            if (!response.ok) {
-              // Fallback to original URL
-              response = await fetch(tokenURI);
-            }
+            const response = await fetchWithGatewayFallback(tokenURI);
             metadata = await response.json();
-            // Rewrite image URL to use reliable gateway
-            if (metadata.image) {
-              metadata.image = toReliableGateway(metadata.image);
-            }
           } catch (error) {
             console.error(`Failed to fetch metadata for token ${id}:`, error);
           }
