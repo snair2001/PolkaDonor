@@ -28,12 +28,33 @@ interface NftMetadata {
     image: string;
 }
 
+// Convert any IPFS gateway URL to a reliable gateway
+function toReliableGateway(url: string | undefined): string {
+  if (!url) return '';
+  // Extract the CID from any known IPFS gateway URL or ipfs:// protocol
+  const match = url.match(/(?:ipfs[:/]+|\/ipfs\/)(.+)/);
+  if (match) {
+    return `https://cloudflare-ipfs.com/ipfs/${match[1]}`;
+  }
+  return url;
+}
+
 export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: NFTCardProps) {
   const { tokenId, metadata, owner, totalDonations } = nft;
   const [donationAmount, setDonationAmount] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const [events, setEvents] = useState<any[]>([]);
+  const [imgSrc, setImgSrc] = useState<string>('');
+  const [imgError, setImgError] = useState(false);
   const { toast } = useToast();
+
+  // Resolve image URL through reliable gateway
+  useEffect(() => {
+    if (metadata?.image) {
+      setImgSrc(toReliableGateway(metadata.image));
+      setImgError(false);
+    }
+  }, [metadata?.image]);
 
   const { data: hash, writeContract, isPending: isDonating } = useWriteContract();
 
@@ -118,15 +139,29 @@ export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: N
       <Card className="overflow-hidden">
         <CardHeader className="p-0">
           <div className="relative w-full h-64">
-            {metadata?.image ? (
+            {imgSrc && !imgError ? (
               <Image
-                src={metadata.image}
-                alt={metadata.name || ''}
+                src={imgSrc}
+                alt={metadata?.name || ''}
                 fill
                 className="object-cover"
+                unoptimized
+                onError={() => {
+                  // If cloudflare gateway fails, try ipfs.io
+                  if (imgSrc.includes('cloudflare-ipfs.com') && metadata?.image) {
+                    const match = metadata.image.match(/(?:ipfs[:/]+|\/ipfs\/)(.+)/);
+                    if (match) {
+                      setImgSrc(`https://ipfs.io/ipfs/${match[1]}`);
+                      return;
+                    }
+                  }
+                  setImgError(true);
+                }}
               />
             ) : (
-              <div className="w-full h-full bg-secondary rounded-t-lg animate-pulse"></div>
+              <div className="w-full h-full bg-secondary rounded-t-lg flex items-center justify-center">
+                <span className="text-sm text-muted-foreground">Image unavailable</span>
+              </div>
             )}
           </div>
         </CardHeader>

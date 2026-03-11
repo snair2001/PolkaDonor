@@ -11,6 +11,16 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatEther } from "viem";
 
+// Convert any IPFS gateway URL to a reliable gateway
+function toReliableGateway(url: string | undefined): string {
+  if (!url) return '';
+  const match = url.match(/(?:ipfs[:/]+|\/ipfs\/)(.+)/);
+  if (match) {
+    return `https://cloudflare-ipfs.com/ipfs/${match[1]}`;
+  }
+  return url;
+}
+
 export interface NftData {
   tokenId: number;
   metadata: any;
@@ -77,10 +87,20 @@ export default function Home() {
           const totalDonationsRaw = nftData[index * 3 + 2]?.result as bigint | undefined;
           const totalDonations = totalDonationsRaw ?? 0n;
 
-          let metadata = {};
+          let metadata: any = {};
           try {
-            const response = await fetch(tokenURI);
+            // Try fetching metadata via reliable gateway first
+            const reliableURI = toReliableGateway(tokenURI);
+            let response = await fetch(reliableURI);
+            if (!response.ok) {
+              // Fallback to original URL
+              response = await fetch(tokenURI);
+            }
             metadata = await response.json();
+            // Rewrite image URL to use reliable gateway
+            if (metadata.image) {
+              metadata.image = toReliableGateway(metadata.image);
+            }
           } catch (error) {
             console.error(`Failed to fetch metadata for token ${id}:`, error);
           }
@@ -267,12 +287,17 @@ export default function Home() {
                       #{index + 1}
                     </span>
                     <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border">
-                      <Image
-                        src={nft.metadata.image}
-                        alt={nft.metadata.name}
-                        fill
-                        className="object-cover"
-                      />
+                      {nft.metadata?.image ? (
+                        <Image
+                          src={nft.metadata.image}
+                          alt={nft.metadata.name || ''}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-secondary" />
+                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{nft.metadata.name}</p>

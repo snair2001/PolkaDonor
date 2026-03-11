@@ -7,6 +7,31 @@ const nextConfig = {
         hostname: 'gateway.pinata.cloud',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.mypinata.cloud',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ipfs.io',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cloudflare-ipfs.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'nftstorage.link',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'dweb.link',
+        pathname: '/**',
+      },
     ],
   },
   webpack: (config) => {
