@@ -23,9 +23,9 @@ interface NFTCardProps {
 }
 
 interface NftMetadata {
-    name: string;
-    description: string;
-    image: string;
+  name: string;
+  description: string;
+  image: string;
 }
 
 // IPFS gateway fallback list (in priority order)
@@ -62,9 +62,9 @@ export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: N
 
   const { data: hash, writeContract, isPending: isDonating } = useWriteContract();
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed, refetch } = 
-    useWaitForTransactionReceipt({ 
-      hash, 
+  const { isLoading: isConfirming, isSuccess: isConfirmed, refetch } =
+    useWaitForTransactionReceipt({
+      hash,
     });
 
   useEffect(() => {
@@ -176,25 +176,25 @@ export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: N
         </CardContent>
         <CardFooter className="flex justify-between items-center p-4 bg-muted/50">
           <div>
-              <p className="text-sm font-bold">{`${formatEther(computedTotalDonations)} DEV`}</p>
-              <p className="text-xs text-muted-foreground">Total Fan Donations</p>
+            <p className="text-sm font-bold">{`${formatEther(computedTotalDonations)} DEV`}</p>
+            <p className="text-xs text-muted-foreground">Total Fan Donations</p>
           </div>
           <Dialog>
             <DialogTrigger asChild>
               <Button disabled={isProcessing}>Fan Donate</Button>
             </DialogTrigger>
             <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Fan Donate to {metadata?.name || `NFT #${tokenId}`}</DialogTitle>
-              <DialogDescription>Your support helps the creator. Enter the amount of DEV you'd like to donate.</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
+              <DialogHeader>
+                <DialogTitle>Fan Donate to {metadata?.name || `NFT #${tokenId}`}</DialogTitle>
+                <DialogDescription>Your support helps the creator. Enter the amount of DEV you'd like to donate.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
                 <div>
-                  <Input 
-                    type="number" 
-                    placeholder="0.05 DEV" 
-                    value={donationAmount} 
-                    onChange={(e) => setDonationAmount(e.target.value)} 
+                  <Input
+                    type="number"
+                    placeholder="0.05 DEV"
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(e.target.value)}
                     disabled={isProcessing}
                   />
                 </div>
@@ -202,19 +202,19 @@ export default function NFTCard({ nft, onDelete, onDonation, onTotalsChange }: N
                   {isProcessing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</> : "Confirm Fan Donation"}
                 </Button>
                 <div className="space-y-2">
-                    <h4 className="text-sm font-semibold">Recent Fan Donations</h4>
-                    <div className="max-h-32 overflow-y-auto space-y-1 pr-2">
-                        {events.length > 0 ? (
-                            events.map((event, index) => (
-                                <div key={index} className="text-xs text-muted-foreground flex justify-between">
-                                    <span>{shortenedAddress((event as any).args.donor)}</span>
-                                    <span>{formatEther((event as any).args.amount)} DEV</span>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-xs text-muted-foreground">No fan donations yet.</p>
-                        )}
-                    </div>
+                  <h4 className="text-sm font-semibold">Recent Fan Donations</h4>
+                  <div className="max-h-32 overflow-y-auto space-y-1 pr-2">
+                    {events.length > 0 ? (
+                      events.map((event, index) => (
+                        <div key={index} className="text-xs text-muted-foreground flex justify-between">
+                          <span>{shortenedAddress((event as any).args.donor)}</span>
+                          <span>{formatEther((event as any).args.amount)} DEV</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-xs text-muted-foreground">No fan donations yet.</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </DialogContent>

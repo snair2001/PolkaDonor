@@ -168,14 +168,14 @@ export default function Home() {
           const url = `/api/donations/${tokenId}`;
           console.log("Fetching donations from:", url);
           const response = await fetch(url);
-          
+
           console.log(`Token ${tokenId} response status:`, response.status);
-          
+
           if (!response.ok) {
             console.warn(`Failed to fetch donations for token ${tokenId}`);
             continue;
           }
-          
+
           const donations = await response.json();
           console.log(`Token ${tokenId} donations:`, donations);
 
@@ -384,7 +384,7 @@ export default function Home() {
           {isLoading
             ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
             : visibleNfts.length > 0
-            ? visibleNfts.map((nft) => (
+              ? visibleNfts.map((nft) => (
                 <NFTCard
                   key={nft.tokenId}
                   nft={nft}
@@ -392,7 +392,7 @@ export default function Home() {
                   onTotalsChange={handleTotalsChange}
                 />
               ))
-            : !isLoadingTotalSupply && (
+              : !isLoadingTotalSupply && (
                 <div className="col-span-full text-center py-10">
                   <p className="mb-4 text-muted-foreground">
                     No NFTs found yet. Be the first to mint and support a cause.
